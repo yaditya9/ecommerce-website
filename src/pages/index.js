@@ -12,8 +12,10 @@ import {
 import Layout from "../components/Layout";
 import data from "../utils/data";
 import NextLink from "next/link";
+/* import Product from "../models/Products"; */ // Sequelize Product model
 
-export default function Home() {
+export default function Home(props) {
+  const products = props;
   return (
     <Layout>
       <Box>
@@ -49,4 +51,16 @@ export default function Home() {
       </Box>
     </Layout>
   );
+}
+
+export async function getServerSideProps() {
+  /*  const { db } from "../models"; */
+  const db = await import("../models/index.js");
+  const products = await db.Product.findAll(); // Sequelize method to get all products
+
+  return {
+    props: {
+      products: JSON.parse(JSON.stringify(products)), // Convert Sequelize objects to plain objects
+    },
+  };
 }

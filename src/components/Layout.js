@@ -39,7 +39,7 @@ export default function Layout({ title, description, children }) {
     palette: {
       mode: darkMode ? "dark" : "light",
       text: {
-        primary: darkMode ? "#ffffff" : "#000000", // Example colors for dark and light modes
+        primary: darkMode ? "#f0c000" : "#000000", // Example colors for dark and light modes
         secondary: darkMode ? "#c7c7c7" : "#555555", // Lighter text for dark mode, darker text for light mode
       },
       primary: {
@@ -75,11 +75,11 @@ export default function Layout({ title, description, children }) {
         >
           <Toolbar>
             <NextLink href="/" passHref>
-              <Link sx={{ textDecoration: "none" }}>
-                <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
-                  zonama
-                </Typography>
-              </Link>
+              {/* <Link sx={{ textDecoration: "none" }}> */}
+              <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
+                zonama
+              </Typography>
+              {/* </Link> */}
             </NextLink>
             <Box sx={{ flexGrow: 1 }}></Box>
             <Box>
@@ -88,10 +88,12 @@ export default function Layout({ title, description, children }) {
                 onChange={darkModeChangeHandler}
               ></Switch>
               <NextLink href="/cart" passHref>
-                <Link sx={{ textDecoration: "none" }}>Cart</Link>
+                {/* <Link sx={{ textDecoration: "none" }}> */}Cart
+                {/* </Link> */}
               </NextLink>
               <NextLink href="/login" passHref>
-                <Link sx={{ textDecoration: "none" }}>Login</Link>
+                {/* <Link sx={{ textDecoration: "none" }}> */}Login
+                {/* </Link> */}
               </NextLink>
             </Box>
           </Toolbar>

@@ -2,6 +2,9 @@ import { useRouter } from "next/router";
 import React from "react";
 import Image from "next/image";
 import NextLink from "next/link";
+/* import Product from "../../models/Products.js";
+import db from "../../models"; */
+// Sequelize Product model
 import {
   Grid,
   Link,
@@ -32,11 +35,11 @@ export default function ProductScreen() {
           marginBottom: 10,
         }}
       >
-        {/* <NextLink href="/" passHref>
-          <Link>
-            <Typography>back to products</Typography>
-          </Link>
-        </NextLink> */}
+        <NextLink href="/" passHref>
+          {/* <Link> */}
+          <Typography color="text.primary">back to products</Typography>
+          {/* </Link> */}
+        </NextLink>
       </Box>
       <Grid container spacing={1}>
         <Grid item md={6} xs={12}>
@@ -51,23 +54,29 @@ export default function ProductScreen() {
         <Grid item md={3} xs={12}>
           <List>
             <ListItem>
-              <Typography component="h1" variant="h1">
+              <Typography component="h1" variant="h1" color="text.primary">
                 {product.name}
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography>Category: {product.category}</Typography>
+              <Typography color="text.primary">
+                Category: {product.category}
+              </Typography>
             </ListItem>
             <ListItem>
-              <Typography>Brand: {product.brand}</Typography>
+              <Typography color="text.primary">
+                Brand: {product.brand}
+              </Typography>
             </ListItem>
             <ListItem>
-              <Typography>
+              <Typography color="text.primary">
                 Rating: {product.rating} stars ({product.numReviews} reviews)
               </Typography>
             </ListItem>
             <ListItem>
-              <Typography>Description: {product.description}</Typography>
+              <Typography color="text.primary">
+                Description: {product.description}
+              </Typography>
             </ListItem>
           </List>
         </Grid>
@@ -76,18 +85,20 @@ export default function ProductScreen() {
             <List>
               <ListItem>
                 <Grid item xs={6}>
-                  <Typography>Price</Typography>
+                  <Typography color="text.primary">Price</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>$ {product.price}</Typography>
+                  <Typography color="text.primary">
+                    $ {product.price}
+                  </Typography>
                 </Grid>
               </ListItem>
               <ListItem>
                 <Grid item xs={6}>
-                  <Typography>Status</Typography>
+                  <Typography color="text.primary">Status</Typography>
                 </Grid>
                 <Grid item xs={6}>
-                  <Typography>
+                  <Typography color="text.primary">
                     {product.countInStock > 0 ? "In stock" : "Unavailable"}
                   </Typography>
                 </Grid>
@@ -103,4 +114,16 @@ export default function ProductScreen() {
       </Grid>
     </Layout>
   );
+}
+export async function getServerSideProps(context) {
+  const { slug } = context.params;
+  const db = await import("../../models/index.js");
+
+  const product = await db.Product.findOne({ where: { slug } }); // Sequelize method to find one product
+
+  return {
+    props: {
+      product: product ? JSON.parse(JSON.stringify(product)) : null,
+    },
+  };
 }
