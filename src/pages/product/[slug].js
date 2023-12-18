@@ -23,24 +23,28 @@ import data from "../../utils/data";
 
 /* import useStyles from '../../utils/styles'; */
 
-export default function ProductScreen() {
-  const { dispatch } = useContext(Store);
+export default function ProductScreen({ product }) {
+  const { state, dispatch } = useContext(Store);
   /* const classes = useStyles(); */
   const router = useRouter();
   const { slug } = router.query;
-  const product = data.products.find((a) => a.slug === slug);
+  /*  const product = data.products.find((a) => a.slug === slug); */
   if (!product) {
     return <Box>Product Not Found</Box>;
   }
+  console.log(product);
   const addToCartHandler = async () => {
+    const existItem = state.cart.cartItems.find((x) => x.id === product.id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    console.log(`This is product id: ${product.id}`);
     const data = await axios.get(
       `http://localhost:3000/api/products/${product.id}`
     );
-    if (data.countInStock <= 0) {
+    if (data.countInStock < quantity) {
       window.alert("Sorry, Product is out of stock");
       return;
     }
-    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity: 1 } });
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...product, quantity } });
     router.push("/cart");
   };
 
@@ -142,6 +146,9 @@ export async function getServerSideProps(context) {
   const db = await import("../../models/index.js");
 
   const product = await db.Product.findOne({ where: { slug } }); // Sequelize method to find one product
+  if (!product) {
+    return { notFound: true };
+  }
 
   return {
     props: {

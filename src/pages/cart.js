@@ -20,12 +20,27 @@ import NextLink from "next/link";
 import { Store } from "../utils/Store";
 import Link from "next/link";
 import Image from "next/image";
+import dynamic from "next/dynamic";
+import axios from "axios";
 
-export default function CartScreen() {
-  const { state } = useContext(Store);
+function CartScreen() {
+  const { state, dispatch } = useContext(Store);
   const {
     cart: { cartItems },
   } = state;
+
+  const updateCardHandler = async (item, quantity) => {
+    const { data } = await axios.get(`/api/products/${item.id}`);
+    if (data.countInStock <= quantity) {
+      window.alert("Sorry, Product is out of stock");
+      return;
+    }
+    dispatch({ type: "CART_ADD_ITEM", payload: { ...item, quantity } });
+  };
+
+  const removeItemHandler = (item) => {
+    dispatch({ type: "CART_REMOVE_ITEM", payload: item });
+  };
 
   return (
     <Layout title="Shopping Cart">
@@ -55,25 +70,30 @@ export default function CartScreen() {
                     <TableRow key={item.id}>
                       <TableCell>
                         <NextLink href={`/product/${item.slug}`} passHref>
-                          <Link>
-                            <Image
-                              src={item.image}
-                              alt={item.name}
-                              width={50}
-                              height={50}
-                            ></Image>
-                          </Link>
+                          {/* <Link> */}
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={50}
+                            height={50}
+                          ></Image>
+                          {/* </Link> */}
                         </NextLink>
                       </TableCell>
                       <TableCell>
                         <NextLink href={`/product/${item.slug}`} passHref>
-                          <Link>
-                            <Typography>{item.name}</Typography>
-                          </Link>
+                          {/* <Link> */}
+                          <Typography>{item.name}</Typography>
+                          {/* </Link> */}
                         </NextLink>
                       </TableCell>
                       <TableCell align="right">
-                        <Select value={item.quantity}>
+                        <Select
+                          value={item.quantity}
+                          onChange={(e) =>
+                            updateCardHandler(item, e.target.value)
+                          }
+                        >
                           {[...Array(item.countInStock).keys()].map((x) => (
                             <MenuItem key={x + 1} value={x + 1}>
                               {x + 1}
@@ -83,7 +103,11 @@ export default function CartScreen() {
                       </TableCell>
                       <TableCell align="right">$ {item.price}</TableCell>
                       <TableCell align="right">
-                        <Button variant="contained" color="secondary">
+                        <Button
+                          variant="contained"
+                          color="secondary"
+                          onClick={() => removeItemHandler(item)}
+                        >
                           x
                         </Button>
                       </TableCell>
@@ -93,7 +117,7 @@ export default function CartScreen() {
               </Table>
             </TableContainer>
           </Grid>
-          <Grid md={3} xs={12}>
+          <Grid item md={3} xs={12}>
             <Card>
               <List>
                 <ListItem>
@@ -116,3 +140,5 @@ export default function CartScreen() {
     </Layout>
   );
 }
+
+export default dynamic(() => Promise.resolve(CartScreen), { ssr: false });
