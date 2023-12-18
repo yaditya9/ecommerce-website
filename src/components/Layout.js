@@ -10,6 +10,7 @@ import {
   Link,
   CssBaseline,
   Switch,
+  Badge,
 } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/material/styles";
@@ -19,7 +20,7 @@ import Cookies from "js-cookie";
 
 export default function Layout({ title, description, children }) {
   const { state, dispatch } = useContext(Store);
-  const { darkMode } = state;
+  const { darkMode, cart } = state;
   const theme = createTheme({
     typography: {
       h1: {
@@ -62,7 +63,7 @@ export default function Layout({ title, description, children }) {
   return (
     <Box sx={{ backgroundColor: theme.palette.background.default }}>
       <Head>
-        <title>zonama</title>
+        <title>EcomProject!</title>
       </Head>
       <ThemeProvider theme={theme}>
         <CssBaseline />
@@ -77,7 +78,7 @@ export default function Layout({ title, description, children }) {
             <NextLink href="/" passHref>
               {/* <Link sx={{ textDecoration: "none" }}> */}
               <Typography sx={{ fontWeight: "bold", fontSize: "1.5rem" }}>
-                zonama
+                ZonamA
               </Typography>
               {/* </Link> */}
             </NextLink>
@@ -88,7 +89,16 @@ export default function Layout({ title, description, children }) {
                 onChange={darkModeChangeHandler}
               ></Switch>
               <NextLink href="/cart" passHref>
-                {/* <Link sx={{ textDecoration: "none" }}> */}Cart
+                {/* <Link sx={{ textDecoration: "none" }}> */}
+                {/* Cart */}
+                {cart.cartItems.length > 0 ? (
+                  <Badge color="secondary" badgeContent={cart.cartItems.length}>
+                    Cart
+                  </Badge>
+                ) : (
+                  "Cart"
+                )}
+                {/* Cart */}
                 {/* </Link> */}
               </NextLink>
               <NextLink href="/login" passHref>
